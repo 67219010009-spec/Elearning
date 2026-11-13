@@ -1,0 +1,33 @@
+# ใช้ตอนพัฒนา: docker compose up -d db
+# ใช้ตอน deploy ทั้งชุดบนเครื่องเดียว: docker compose up -d --build
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: elearning
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-elearning_dev}
+      POSTGRES_DB: elearning
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: unless-stopped
+
+  api:
+    build: ./backend
+    depends_on: [db]
+    environment:
+      DATABASE_URL: postgres://elearning:${DB_PASSWORD:-elearning_dev}@db:5432/elearning
+      JWT_SECRET: ${JWT_SECRET:-dev-only-change-me}
+      UPLOAD_DIR: /data/uploads
+      PORT: 3000
+    volumes:
+      - uploads:/data/uploads
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  uploads:
