@@ -38,13 +38,13 @@ npm run dev         # http://localhost:5173
 
 ### บัญชีทดลอง (หลัง `npm run seed`)
 
-| บทบาท | อีเมล | รหัสผ่าน |
+| บทบาท | Username | รหัสผ่าน |
 |---|---|---|
-| แอดมิน | admin@example.com | admin1234 |
-| ผู้สอน | teacher@example.com | teacher1234 |
-| นักเรียน | student@example.com | student1234 |
+| แอดมิน | admin | admin1234 |
+| ผู้สอน | teacher | teacher1234 |
+| นักเรียน | student | student1234 |
 
-ลองใช้งาน: ล็อกอินเป็นผู้สอน → "จัดการคอร์ส" → สร้างคอร์สและเพิ่มบทเรียน → ล็อกเอาท์ → ล็อกอินเป็นนักเรียน → ลงทะเบียนเรียน
+ลองใช้งาน: ล็อกอินเป็น admin → ADMIN Dashboard → เปลี่ยนสิทธิ์บัญชีที่อนุมัติเป็นผู้สอน → ล็อกอินบัญชีผู้สอน → "จัดการคอร์ส" → สร้างคอร์สและเพิ่มบทเรียน → ล็อกเอาท์ → ล็อกอินเป็นนักเรียน → ลงทะเบียนเรียน
 
 ## เส้นทาง API
 
@@ -59,7 +59,7 @@ npm run dev         # http://localhost:5173
 | POST | /api/courses/:id/lessons | เจ้าของคอร์ส / แอดมิน |
 | POST | /api/courses/:id/enroll | ล็อกอิน |
 | DELETE | /api/lessons/:id | เจ้าของคอร์ส / แอดมิน |
-| POST | /api/lessons/:id/complete | นักเรียนที่ลงทะเบียนแล้ว |
+| POST | /api/lessons/:id/complete | นักเรียนที่ลงทะเบียนแล้ว |\n| POST | /api/analytics/view | ทุกคน (บันทึกสถิติการเข้าชม) |\n| GET | /api/admin/overview, /api/admin/users | แอดมิน |\n| PATCH | /api/admin/users/:id/role | แอดมิน (กำหนด student / instructor) |
 
 ## Deploy
 
@@ -83,3 +83,4 @@ npm run dev         # http://localhost:5173
 - ไฟล์ใน `/uploads` เปิดดูได้ถ้ารู้ URL (ชื่อไฟล์เป็นสุ่ม UUID และ URL ส่งให้เฉพาะผู้มีสิทธิ์เท่านั้น) ถ้าต้องการเข้มงวดขึ้น ให้เสิร์ฟผ่าน route ที่ตรวจสิทธิ์
 - ล็อกเอาท์ลบ token ฝั่งผู้ใช้ (JWT ไม่มีสถานะที่เซิร์ฟเวอร์) และ token มีอายุ 7 วัน
 - ก่อนใช้งานจริงต้องเปลี่ยน `JWT_SECRET`, `DB_PASSWORD` และไม่ใช้บัญชีทดลอง
+\n\n## การอัปเดตระบบ\n\n- รัน SQL ใน `backend/db/schema.sql` กับฐานข้อมูลเดิมเพื่อเพิ่ม username และตารางสถิติ (บัญชีตัวอย่างเดิมจะเปลี่ยนเป็น `admin`, `teacher`, `student` ตามลำดับ ส่วนบัญชีอื่นจะเป็น `user<ID>` เพื่อให้ล็อกอินต่อได้ด้วย username ใหม่)\n- สมัครสมาชิกใหม่จะได้สิทธิ์นักเรียนเท่านั้น การอนุมัติผู้สอนทำได้จาก ADMIN Dashboard\n- สถิตินับจำนวน page views, ผู้เข้าชมไม่ซ้ำตาม browser identifier (นับอุปกรณ์/เบราว์เซอร์ ไม่ใช่การยืนยันตัวบุคคล) และยอดเปิดหน้าคอร์ส/ยอดลงทะเบียนเรียน\n- เปลี่ยนชื่อเครดิตท้ายเว็บได้ที่ `frontend/src/App.vue`\n

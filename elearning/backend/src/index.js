@@ -7,6 +7,8 @@ import multer from 'multer';
 import authRoutes from './routes/auth.js';
 import courseRoutes from './routes/courses.js';
 import lessonRoutes from './routes/lessons.js';
+import adminRoutes from './routes/admin.js';
+import analyticsRoutes from './routes/analytics.js';
 import { UPLOAD_DIR } from './files.js';
 
 if (!process.env.JWT_SECRET || !process.env.DATABASE_URL) {
@@ -32,6 +34,8 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/lessons', lessonRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.use((err, _req, res, _next) => {
   if (err instanceof multer.MulterError) {
