@@ -7,12 +7,21 @@ const users = [
   ['ผู้สอนตัวอย่าง', 'teacher', 'teacher1234', 'instructor'],
   ['นักเรียนตัวอย่าง', 'student', 'student1234', 'student'],
 ];
+
 for (const [name, username, password, role] of users) {
-  await pool.query(
-    `INSERT INTO users (name, username, password_hash, role) VALUES ($1, $2, $3, $4)
-     ON CONFLICT DO NOTHING`,
-    [name, username, await bcrypt.hash(password, 10), role]
+  const exists = await pool.query(
+    'SELECT 1 FROM users WHERE LOWER(username) = LOWER($1)',
+    [username]
   );
+
+  if (!exists.rowCount) {
+    await pool.query(
+      `INSERT INTO users (name, username, password_hash, role)
+       VALUES ($1, $2, $3, $4)`,
+      [name, username, await bcrypt.hash(password, 10), role]
+    );
+  }
 }
-console.log('สร้างบัญชีตัวอย่างเรียบร้อย (ดูชื่อผู้ใช้และรหัสผ่านใน README)');
+
+console.log('สร้างบัญชีตัวอย่างเรียบร้อย');
 await pool.end();

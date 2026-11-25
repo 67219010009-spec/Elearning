@@ -1,26 +1,13 @@
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
-  username VARCHAR(50) UNIQUE,
-  email VARCHAR(255) UNIQUE,
+  username VARCHAR(50) NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
   role VARCHAR(20) NOT NULL DEFAULT 'student'
     CHECK (role IN ('student', 'instructor', 'admin')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- รองรับฐานข้อมูลเดิมที่เคยใช้ email เป็นชื่อเข้าสู่ระบบ
-ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(50);
-UPDATE users
-SET username = CASE
-  WHEN LOWER(email) = 'admin@example.com' THEN 'admin'
-  WHEN LOWER(email) = 'teacher@example.com' THEN 'teacher'
-  WHEN LOWER(email) = 'student@example.com' THEN 'student'
-  ELSE 'user' || id
-END
-WHERE username IS NULL OR btrim(username) = '';
-ALTER TABLE users ALTER COLUMN username SET NOT NULL;
-ALTER TABLE users ALTER COLUMN email DROP NOT NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users(LOWER(username));
 
 CREATE TABLE IF NOT EXISTS courses (

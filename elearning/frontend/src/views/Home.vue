@@ -25,7 +25,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="border border-indigo-600">
+  <div>
     <section class="mb-8">
       <h1 class="text-3xl">เลือกคอร์สที่อยากเรียน</h1>
       <input v-model="q" class="input mt-4 max-w-md" placeholder="ค้นหาชื่อคอร์สหรือคำอธิบาย" aria-label="ค้นหาคอร์ส" />
